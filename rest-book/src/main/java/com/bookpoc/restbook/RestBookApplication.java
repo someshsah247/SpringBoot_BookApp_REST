@@ -2,8 +2,10 @@ package com.bookpoc.restbook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
+@EnableCaching // used to enable default cashing
 public class RestBookApplication {
 
 	public static void main(String[] args) {

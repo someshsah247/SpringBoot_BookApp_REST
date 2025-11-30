@@ -26,17 +26,17 @@ public class BookController {
 	@Autowired
 	BookUtils bookUtils;
 	
-	@GetMapping("/testing")
-	public String welcomeText() {
-		return "Working...";
-	}
+//	@GetMapping("/testing")
+//	public String welcomeText() {
+//		return "Working...";
+//	}
 	
 	@GetMapping("/books")
 	public ResponseEntity<List<Books>> getAllBooks(){
 		return ResponseEntity.ok().body(bookService.getAllBooks());
 	}
 
-    @GetMapping("/book/id")
+    @GetMapping("/book/{id}")
     public ResponseEntity<Books> getBookById(@PathVariable("id") int bookId){
         Optional<Books> optionalBooks =  bookService.getBookById(Long.parseLong(String.valueOf(bookId)));
         return optionalBooks.map(books -> ResponseEntity.ok().body(books)).orElseGet(() -> ResponseEntity.notFound().build());
@@ -64,11 +64,13 @@ public class BookController {
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<String> deleteBookById(@PathVariable Long id) {
+	public ResponseEntity<String> deleteBookById(@PathVariable Long id) throws Exception {
 		if(bookUtils.idValid(id))
 			return ResponseEntity.ok(bookService.deleteBook(id));
 		else
-			return ResponseEntity.notFound().build();  //Not a Valid Id.
+			//return ResponseEntity.notFound().build();  //Not a Valid Id.
+            throw new Exception("Book not found with id: " + id);
+
 	}
 	
 }
