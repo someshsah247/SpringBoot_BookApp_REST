@@ -46,7 +46,7 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!--  For swagger  http://localhost:8082/swagger-ui/index.html -->
+		<!--  For swagger  http://localhost:8080/swagger-ui/index.html -->
 		<dependency>
 		    <groupId>org.springdoc</groupId>
 		    <artifactId>springdoc-openapi-ui</artifactId>

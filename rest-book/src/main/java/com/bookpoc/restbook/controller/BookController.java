@@ -1,8 +1,10 @@
 package com.bookpoc.restbook.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ public class BookController {
 	
 	@Autowired
 	BookService bookService;
+
 	@Autowired
 	BookUtils bookUtils;
 	
@@ -29,37 +32,43 @@ public class BookController {
 	}
 	
 	@GetMapping("/books")
-	public List<Books> allBooks(){
-		return bookService.getAllBooks();
+	public ResponseEntity<List<Books>> getAllBooks(){
+		return ResponseEntity.ok().body(bookService.getAllBooks());
 	}
+
+    @GetMapping("/book/id")
+    public ResponseEntity<Books> getBookById(@PathVariable("id") int bookId){
+        Optional<Books> optionalBooks =  bookService.getBookById(Long.parseLong(String.valueOf(bookId)));
+        return optionalBooks.map(books -> ResponseEntity.ok().body(books)).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 	
 	@PostMapping("/book")
-	public Books addBook(@RequestBody Books book){
+	public ResponseEntity<Books> addBook(@RequestBody Books book){
 		
 		if(bookUtils.bookValid(book)) {
 			bookService.saveBook(book);
-				return book;
+				return ResponseEntity.ok(book);
 		}
 		else
-			return new Books();
+			return ResponseEntity.badRequest().build();
 	}
 	
 	@PutMapping("/update/{id}")
-	public Books updateBookById(@RequestBody Books book, @PathVariable Long id) {
+	public ResponseEntity<Books> updateBookById(@RequestBody Books book, @PathVariable Long id) {
 		if(bookUtils.bookValid(book)) {
 			bookService.updateBook(book,id);
-				return book;
+				return ResponseEntity.ok(book);
 		}
 		else
-			return new Books();
+			return ResponseEntity.notFound().build();
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public String deleteBookById(@PathVariable Long id) {
+	public ResponseEntity<String> deleteBookById(@PathVariable Long id) {
 		if(bookUtils.idValid(id))
-			return bookService.deleteBook(id);
+			return ResponseEntity.ok(bookService.deleteBook(id));
 		else
-			return "Not a Valid Id.";
+			return ResponseEntity.notFound().build();  //Not a Valid Id.
 	}
 	
 }

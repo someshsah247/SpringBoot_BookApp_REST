@@ -1,6 +1,7 @@
 package com.bookpoc.restbook.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,12 @@ public class BookService {
 		// TODO Auto-generated method stub
 		return bookRepository.findAll();
 	}
+
+    public Optional<Books> getBookById(Long id) {
+        // TODO Auto-generated method stub
+        Optional<Books> book = bookRepository.findById(id);
+        return book;
+    }
 
 	public Books saveBook(Books book) {
 		// TODO Auto-generated method stub
