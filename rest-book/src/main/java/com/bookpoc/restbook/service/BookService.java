@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.bookpoc.restbook.util.BookGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +19,7 @@ import javax.annotation.PostConstruct;
 
 @Service
 @Slf4j
-@Cacheable(cacheNames = "bookCache")
+@CacheConfig(cacheNames = "bookCache") // now no need to write cache names everywhere
 public class BookService {
 	
 	@Autowired
@@ -33,28 +34,32 @@ public class BookService {
 //        }
 //    }
 
-    @Cacheable(value = "bookCache")
+    // @Cacheable(value = "bookCache")
+    @Cacheable
 	public List<Books> getAllBooks() {
 		// TODO Auto-generated method stub
         log.info("BookService :: getAllBooks :: Hit DB ?");
 		return bookRepository.findAll();
 	}
 
-    @Cacheable(value = "bookCache")
+    // @Cacheable(value = "bookCache")
+    @Cacheable
     public Optional<Books> getBookById(Long id) {
         // TODO Auto-generated method stub
         Optional<Books> book = bookRepository.findById(id);
         return book;
     }
 
-    @CachePut(value = "bookCache", key = "#result.id")  // use returned object
-	public Books saveBook(Books book) {
+    // @CachePut(value = "bookCache", key = "#result.id")  // use returned object
+    @CachePut(key = "#result.id")
+    public Books saveBook(Books book) {
 		// TODO Auto-generated method stub
 		return bookRepository.save(book); // ID generated here, only after persist
 		
 	}
 
-    @CachePut(value = "booksCache", key = "#id")
+    // @CachePut(value = "booksCache", key = "#id")
+    @CachePut(key = "#id")
 	public Books updateBook(Books book, Long id) {
 		book.setId(id);
 		book.setD_internalComments("update from URI");
@@ -62,8 +67,9 @@ public class BookService {
 		
 	}
 
-    @CacheEvict(value = "bookCache", key = "#id")  // remove from cache also
-	public String deleteBook(Long id) {
+    // @CacheEvict(value = "bookCache", key = "#id")  // remove from cache also
+    @CacheEvict(key = "#id")
+    public String deleteBook(Long id) {
 		// TODO Auto-generated method stub
         log.info("BookService :: deleteBook :: Hit DB ?");
 		bookRepository.deleteById(id);
