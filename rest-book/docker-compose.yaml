@@ -1,0 +1,65 @@
+version: '3.8'
+services:
+  rest-book-application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bookapp:1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy  # Waits for DB health
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bookdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC  # Use 'db' service name
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+  db:
+    image: mysql:8.0
+    container_name: rest-book-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bookdb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persist data
+
+volumes:
+  mysql_data:
+
+
+
+
+
+
+
+#services:
+#  db:
+#    image: mysql:8.0
+#    environment:
+#      MYSQL_ROOT_USERNAME: root
+#      MYSQL_ROOT_PASSWORD: somesh
+#      MYSQL_DATABASE : bookdb
+#    ports:
+#      - "3307:3306"
+#
+#  application:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    image: "bookapp:1.0"  # Your JAR-built image
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - "db"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bookdb?useSSL=false
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: somesh
