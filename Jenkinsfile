@@ -18,7 +18,7 @@ pipeline {
             steps {
                 echo 'Checking out code from Git...'
                 git branch: 'master',
-                    url: 'https://github.com/someshsah247/SpringBoot_BookApp_REST.git',  // Update with your repo
+                    url: 'https://github.com/someshsah247/SpringBoot_BookApp_REST.git'  // Update with your repo
             }
         }
 
